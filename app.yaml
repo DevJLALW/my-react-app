@@ -1,0 +1,9 @@
+runtime: nodejs20
+service: default
+handlers:
+  - url: /static
+    static_dir: build/static
+
+  - url: /.*
+    static_files: build/index.html
+    upload:  build/index.html
