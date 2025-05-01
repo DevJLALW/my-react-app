@@ -3,7 +3,7 @@ import './App.css';
 
 function App() {
   const [image, setImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState('');
+  const [objects, setObjects] = useState([]);
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -27,25 +27,31 @@ function App() {
       }
 
       const data = await res.json();
-      setImageUrl(data.imageUrl);
+      setObjects(data);
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred while uploading the image. Check the console for more details.');
+      alert('An error occurred while processing the image. Check the console for more details.');
     }
   };
 
   return (
     <div className="App">
-      <h1>Upload Image</h1>
+      <h1>Object Detection</h1>
       <form onSubmit={handleSubmit}>
         <input type="file" accept="image/*" onChange={handleImageChange} />
-        <button type="submit">Upload</button>
+        <button type="submit">Analyze</button>
       </form>
 
-      {imageUrl && (
+      {objects.length > 0 && (
         <div>
-          <h2>Uploaded Image:</h2>
-          <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '500px' }} />
+          <h2>Detected Objects:</h2>
+          <ul>
+            {objects.map((obj, idx) => (
+              <li key={idx}>
+                {obj.name} — {(obj.score * 100).toFixed(2)}%
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>
