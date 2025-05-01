@@ -44,8 +44,12 @@ async function getAccessToken() {
 app.post('/api/upload', (req, res) => {
   const busboy = Busboy({ headers: req.headers });
 
+  const { v4: uuidv4 } = require('uuid');
+
   busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-    const filePath = `images/${filename}`;  // Define the path in the bucket
+  const safeFilename = typeof filename === 'string' ? filename : `upload-${Date.now()}`;
+  const uniqueFilename = `${uuidv4()}-${safeFilename}`;
+  const filePath = `images/${uniqueFilename}`;
 
     // Upload the file to Firebase Storage
     const fileUpload = bucket.file(filePath).createWriteStream({
