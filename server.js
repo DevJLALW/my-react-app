@@ -20,18 +20,17 @@ const axios = require('axios');
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
-  storageBucket: 'test_img_upload_acs',  // Your Firebase Storage bucket name
+  storageBucket: 'test_img_upload_acs_2',  // Your Firebase Storage bucket name
 });
 
 
 const bucket = admin.storage().bucket();
-const db = admin.firestore(); 
-const imagesearchRef = db.collection('imagesearch');
+
 
 // Function to get the Google API OAuth2 token
 async function getAccessToken() {
   const auth = new google.auth.GoogleAuth({
-      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,  
+ //     keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,  
       scopes: ['https://www.googleapis.com/auth/cloud-platform'],
   });
 
@@ -95,14 +94,6 @@ app.post('/api/upload', (req, res) => {
                   boundingPoly: obj.boundingPoly.normalizedVertices,
               }));
 
-              // Store image URL and metadata in Firestore
-              const docRef = await imagesearchRef.add({
-                  imageUrl: imageUrl,
-                  visionData: { localizedObjectAnnotations: objects },
-                  timestamp: admin.firestore.FieldValue.serverTimestamp(),
-              });
-
-              console.log('Data written to Firestore with ID:', docRef.id);
               res.json(objects);
           } catch (err) {
               console.error('Error during image processing:', err);
